@@ -1,0 +1,553 @@
+{
+	"info": {
+		"_postman_id": "c7009450-8a8f-46db-9298-35a75836cc2d",
+		"name": "AVIS_v2_cli_reporters",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35145714"
+	},
+	"item": [
+		{
+			"name": "accessToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"access-token\", pm.response.json().access_token);",
+							"",
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "{{client_id}}",
+						"type": "text"
+					},
+					{
+						"key": "client_secret",
+						"value": "{{client_secret}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/oauth/token/v1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"oauth",
+						"token",
+						"v1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getVehicles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.collectionVariables.set(\"access-token\", pm.response.json().access_token);\r",
+							"\r",
+							"pm.collectionVariables.set('vehicleSippCode', data.vehicles[0].category.sipp_code);\r",
+							"pm.collectionVariables.set('rateCode', data.vehicles[0].rate_totals.rate.rate_code);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "{{vault:avis_client_id}}",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cars/catalog/v2/vehicles?brand={{brand}}&pickup_location={{pickUpLocation}}&dropoff_location={{dropOffLocation}}&country_code={{countryCode}}&pickup_date={{pickupDate}}&dropoff_date={{dropoffDate}}&date_of_birth={{dateOfBirth}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cars",
+						"catalog",
+						"v2",
+						"vehicles"
+					],
+					"query": [
+						{
+							"key": "brand",
+							"value": "{{brand}}"
+						},
+						{
+							"key": "pickup_location",
+							"value": "{{pickUpLocation}}"
+						},
+						{
+							"key": "dropoff_location",
+							"value": "{{dropOffLocation}}"
+						},
+						{
+							"key": "country_code",
+							"value": "{{countryCode}}"
+						},
+						{
+							"key": "pickup_date",
+							"value": "{{pickupDate}}"
+						},
+						{
+							"key": "dropoff_date",
+							"value": "{{dropoffDate}}"
+						},
+						{
+							"key": "date_of_birth",
+							"value": "{{dateOfBirth}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getVehiclesRates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.collectionVariables.set('reservationTotal',data.reservation.rate_totals.totals.reservation_total);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "{{client_id}}",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"transaction\": {\r\n        \"transaction_id\": \"IAGL_getVehiclesRates_{{uniqueId}}\"\r\n    },\r\n    \"product\": {\r\n        \"brand\": \"{{brand}}\",\r\n        \"iata_number\": \"{{iataNumber}}\"\r\n    },\r\n    \"reservation\": {\r\n        \"pickup_date\": \"{{pickupDate}}\",\r\n        \"pickup_location\": \"{{pickUpLocation}}\",\r\n        \"dropoff_date\": \"{{dropoffDate}}\",\r\n        \"dropoff_location\": \"{{dropOffLocation}}\",\r\n        \"vehicle_sipp_code\": \"{{vehicleSippCode}}\"\r\n    },\r\n    \"rate_totals\": {\r\n        \"rate\": {\r\n            \"rate_code\": \"{{rateCode}}\",\r\n            \"country_code\": \"{{countryCode}}\",\r\n            \"discount\": {\r\n                \"code\": \"N255200\"\r\n            }\r\n        }\r\n    },\r\n    \"customer\": {\r\n        \"contact\": {\r\n            \"date_of_birth\": \"{{dateOfBirth}}\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cars/catalog/v2/vehicles/rates",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cars",
+						"catalog",
+						"v2",
+						"vehicles",
+						"rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createReservation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.collectionVariables.set('confirmationNumber', data.reservation.confirmation.number);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", () => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "{{client_id}}",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"product\": {\r\n        \"brand\": \"{{brand}}\",\r\n        \"iata_number\": \"{{iataNumber}}\"\r\n    },\r\n    \"transaction\": {\r\n        \"transaction_id\": \"IAGL_createReservation_{{uniqueId}}\"\r\n    },\r\n    \"reservation\": {\r\n        \"pickup_date\": \"{{pickupDate}}\",\r\n        \"pickup_location\": \"{{pickUpLocation}}\",\r\n        \"dropoff_date\": \"{{dropoffDate}}\",\r\n        \"dropoff_location\": \"{{dropOffLocation}}\",\r\n        \"vehicle_sipp_code\": \"{{vehicleSippCode}}\"\r\n    },\r\n    \"rate_totals\": {\r\n        \"rate\": {\r\n            \"rate_code\": \"{{rateCode}}\",\r\n            \"country_code\": \"{{countryCode}}\",\r\n            \"discount\": {\r\n                \"code\": \"N255200\"\r\n            }\r\n        }\r\n    },\r\n    \"extras\": [\r\n        {\r\n            \"code\": \"ADD\",\r\n            \"quantity\": 1\r\n        }\r\n    ],\r\n    \"arrival_flight\": {\r\n        \"airline_code\": \"BA\",\r\n        \"airline_number\": \"4030\"\r\n    },\r\n    \"payment_preference\": {\r\n        \"type\": \"Voucher\",\r\n        \"id\": \"EI1FPLX6NW\",\r\n        \"fixed_value\": \"FixedValue\",\r\n        \"electronic_indicator\": true,\r\n        \"amount\": {{reservationTotal}},\r\n        \"currency\": \"GBP\"\r\n    },\r\n    \"customer\": {\r\n        \"contact\": {\r\n            \"title\": \"Mr\",\r\n            \"first_name\": \"nikos\",\r\n            \"last_name\": \"papas\",\r\n            \"email\": \"stg_rewardbookings@aerlingus.com\",\r\n            \"telephone\": \"9315646\",\r\n            \"date_of_birth\": \"1999-09-10\"\r\n        },\r\n        \"address\": {\r\n            \"address_line_1\": \"\",\r\n            \"address_line_2\": \"\",\r\n            \"address_line_3\": \"\",\r\n            \"city\": \"\",\r\n            \"state_name\": \"\",\r\n            \"postal_code\": \"\",\r\n            \"country_code\": \"IE\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cars/reservation/v2",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cars",
+						"reservation",
+						"v2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "viewReservation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody);",
+							"",
+							"pm.collectionVariables.set('confirmationNumber_VR', data.reservation.confirmation.number);",
+							"",
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check confirmation number\", () => {",
+							"    cn_create=pm.collectionVariables.get('confirmationNumber');",
+							"    cn_view=pm.collectionVariables.get('confirmationNumber_VR');",
+							"    pm.expect(cn_create, cn_view);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "{{client_id}}",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}:443/cars/reservation/v2?brand={{brand}}&confirmation_number={{confirmationNumber}}&last_name=papas",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "443",
+					"path": [
+						"cars",
+						"reservation",
+						"v2"
+					],
+					"query": [
+						{
+							"key": "brand",
+							"value": "{{brand}}"
+						},
+						{
+							"key": "confirmation_number",
+							"value": "{{confirmationNumber}}"
+						},
+						{
+							"key": "last_name",
+							"value": "papas"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancelReservation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "client_id",
+						"value": "{{client_id}}",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"product\": {\r\n\t\t\"brand\": \"{{brand}}\",\r\n\t\t\"iata_number\": \"{{iataNumber}}\"\r\n\t},\r\n\t\"transaction\": {\r\n\t\t\"transaction_id\": \"IAGL_cancelReservation_{{uniqueId}}\"\r\n\t},\r\n  \"reservation\": {\r\n    \"email_notification\": true,\r\n    \"confirmation\": {\r\n      \"number\": \"{{confirmationNumber}}\"\r\n    }\r\n  },\r\n  \"customer\": {\r\n    \"contact\": {\r\n      \"last_name\": \"papas\"\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/cars/reservation/v2",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"cars",
+						"reservation",
+						"v2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.collectionVariables.set('uniqueId', _.random(10000, 50000));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "access-token",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJwem5vRHdsYlNUcmFwM2FTQzdSUUl3anpzb2NJWGlaTUQ2cUxBakh5X0NVIn0.eyJqdGkiOiJhMjM4NmUwOC00MzBmLTQxMTctYTQ2ZC0yYjNjODlmZDZmODEiLCJleHAiOjE3MzYxNjE5ODYsIm5iZiI6MCwiaWF0IjoxNzM2MTU0ODQ2LCJpc3MiOiJodHRwczovL3Nzby1zc28uYXBwcy5hcGktbnAuYWJnYXBpc2VydmljZXMuY29tL2F1dGgvcmVhbG1zLzNzY2FsZS1zdGFnaW5nLWFwaS1vaWRjIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6Ijc1OTc5ZTM4LTZmZmUtNDZiYi1iYTdhLTFiOGRlZDk3YjAxMCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImU3YWUwMGQzIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiZmFjY2JlYTQtMDk0My00ZWZlLTllNWUtMWVkMWM0MWU1YTFlIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImNsaWVudElkIjoiZTdhZTAwZDMiLCJjbGllbnRIb3N0IjoiMTguMTkxLjcxLjI0NyIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiY2xpZW50X3JlZ2lvbiI6IkVNRUEiLCJjbGllbnRfdHJhdmVsX3R5cGUiOiI2IiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWU3YWUwMGQzIiwiY2xpZW50QWRkcmVzcyI6IjE4LjE5MS43MS4yNDciLCJjbGllbnRfbmFtZSI6IkF2aW9zIn0.dZJs1HfbcheTWGDTXvzVILhw79jGQ6RhqhRME9rXNbbwq4xm9KjbnS9zOoFak1Ls09wcUwcCPztYuviiLknIgCxpCCULfZh7Z726P492uaFZwapH-IcE70uamOa0IMrKTYXPOEqT3L0fIjT-cTeeCEJXNelZOkZOIQMbOWNf8zDQHI9rPNTVuSUz-N5edJQk7XTEaGXEK3unC5YQvZUaNK22x1wRmbG_AOxw27gLb8BXAZmDVE81wHmuQYHAqy0npt_egAW0jpK0ogtN70E93qSXOjKXAH6WY_v0Dg1yzAj_vu5SUFbPo5ouh0peNxypt56_0XEuHkApXwxVt5KTmQ"
+		},
+		{
+			"key": "brand",
+			"value": "Avis",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "brand",
+			"value": "Budget",
+			"type": "string"
+		},
+		{
+			"key": "pickUpLocation",
+			"value": "LHR"
+		},
+		{
+			"key": "dropOffLocation",
+			"value": "LHR"
+		},
+		{
+			"key": "pickupDate",
+			"value": "2025-02-14T10:00:00",
+			"type": "string"
+		},
+		{
+			"key": "dropoffDate",
+			"value": "2025-02-15T10:00:00",
+			"type": "string"
+		},
+		{
+			"key": "countryCode",
+			"value": "IE",
+			"type": "string"
+		},
+		{
+			"key": "iataNumber",
+			"value": "Avis GBP",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "iataNumber",
+			"value": "Avis EUR",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "iataNumber",
+			"value": "Avis USD",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "iataNumber",
+			"value": "0041193E",
+			"type": "string"
+		},
+		{
+			"key": "iataNumber",
+			"value": "Budget EUR",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "iataNumber",
+			"value": "Budget USD",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "dateOfBirth",
+			"value": "1986-05-12",
+			"type": "string"
+		},
+		{
+			"key": "vehicleSippCode",
+			"value": "EDMR"
+		},
+		{
+			"key": "rateCode",
+			"value": "KH"
+		},
+		{
+			"key": "confirmationNumber",
+			"value": "13405126IE0"
+		},
+		{
+			"key": "reservationTotal",
+			"value": 127.68
+		},
+		{
+			"key": "uniqueId",
+			"value": 40502
+		},
+		{
+			"key": "confirmationNumber_VR",
+			"value": ""
+		}
+	]
+}
