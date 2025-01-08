@@ -13,7 +13,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"//parse the json response",
+							"//parsex the json response",
 							"const response = pm.response.json();",
 							"",
 							"//get and set vars",
