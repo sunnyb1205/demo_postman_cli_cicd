@@ -1,69 +1,17 @@
-name: Automated API Tests using Postman CLI
+name: Automated API tests using Postman CLI
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch: # Allows manual trigger
+on: push
 
 jobs:
   automated-api-tests:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout Repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      # Step 2: Install Node.js
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      # Step 3: Install Postman CLI
+      - uses: actions/checkout@v4
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-
-      # Step 4: Authenticate with Postman CLI
       - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      - name: Run API tests
         run: |
-          postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-
-      # Step 5: Run API Tests and Export JSON Results
-      - name: Run API Tests
-        run: |
-          postman collection run "35145714-c7009450-8a8f-46db-9298-35a75836cc2d" \
-          -e "35145714-e9e5e2be-b1f3-4485-bdb0-119d3c862542" \
-          --reporters cli,json \
-          --reporter-json-export postman-results.json
-
-      # Step 6: Install Newman Reporter for HTML Conversion
-      - name: Install Newman Reporter for HTML
-        run: |
-          npm install -g newman-reporter-htmlextra
-
-      # Step 7: Convert JSON to HTML Report
-      - name: Generate HTML Report from JSON
-        run: |
-          newman-reporter-htmlextra postman-results.json --reporter-htmlextra-export postman-report.html
-
-      # Step 8: Upload HTML Test Report
-      - name: Upload HTML Test Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: postman-html-report
-          path: postman-report.html
-          retention-days: 30
-
-      # Step 9: Display Completion Status
-      - name: Display Workflow Status
-        if: always()
-        run: echo "✅ Workflow completed. Check the HTML report for test results."
-
-      # Step 10: Notify on Failure
-      - name: Notify on Failure
-        if: failure()
-        run: echo "❌ API Tests Failed. Please check the postman-report.html for details."
+          postman collection run "35145714-c7009450-8a8f-46db-9298-35a75836cc2d" -e "35145714-e9e5e2be-b1f3-4485-bdb0-119d3c862542"
