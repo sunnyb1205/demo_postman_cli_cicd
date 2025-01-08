@@ -13,7 +13,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"//parsex the json response",
+							"//parse the json response",
 							"const response = pm.response.json();",
 							"",
 							"//get and set vars",
@@ -214,7 +214,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"transaction\": {\r\n        \"transaction_id\": \"IAGL_getVehiclesRates_{{uniqueId}}\"\r\n    },\r\n    \"product\": {\r\n        \"brand\": \"{{brand}}\",\r\n        \"iata_number\": \"{{iataNumber}}\"\r\n    },\r\n    \"reservation\": {\r\n        \"pickup_date\": \"{{pickupDate}}\",\r\n        \"pickup_location\": \"{{pickUpLocation}}\",\r\n        \"dropoff_date\": \"{{dropoffDate}}\",\r\n        \"dropoff_location\": \"{{dropOffLocation}}\",\r\n        \"vehicle_sipp_code\": \"{{vehicleSippCode}}\"\r\n    },\r\n    \"rate_totals\": {\r\n        \"rate\": {\r\n            \"rate_code\": \"{{rateCode}}\",\r\n            \"country_code\": \"{{countryCode}}\",\r\n            \"discount\": {\r\n                \"code\": \"N255200\"\r\n            }\r\n        }\r\n    },\r\n    \"customer\": {\r\n        \"contact\": {\r\n            \"date_of_birth\": \"{{dateOfBirth}}\"\r\n        }\r\n    }\r\n}",
+					"raw": "{\r\n    \"transaction\": {\r\n        \"transaction_id\": \"IAGL_getVehiclesRates_{{uniqueId}}\"\r\n    },\r\n    \"product\": {\r\n        \"brand\": \"{{brand}}\",\r\n        \"iata_number\": \"0149575L\"\r\n    },\r\n    \"reservation\": {\r\n        \"pickup_date\": \"{{pickupDate}}\",\r\n        \"pickup_location\": \"{{pickUpLocation}}\",\r\n        \"dropoff_date\": \"{{dropoffDate}}\",\r\n        \"dropoff_location\": \"{{dropOffLocation}}\",\r\n        \"vehicle_sipp_code\": \"{{vehicleSippCode}}\"\r\n    },\r\n    \"rate_totals\": {\r\n        \"rate\": {\r\n            \"rate_code\": \"{{rateCode}}\",\r\n            \"country_code\": \"{{countryCode}}\",\r\n            \"discount\": {\r\n                \"code\": \"N255200\"\r\n            }\r\n        }\r\n    },\r\n    \"customer\": {\r\n        \"contact\": {\r\n            \"date_of_birth\": \"{{dateOfBirth}}\"\r\n        }\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -510,7 +510,7 @@
 		},
 		{
 			"key": "iataNumber",
-			"value": "0149575L",
+			"value": "Avis GBP",
 			"type": "string"
 		},
 		{
@@ -574,14 +574,6 @@
 		},
 		{
 			"key": "token",
-			"value": ""
-		},
-		{
-			"key": "access-token",
-			"value": ""
-		},
-		{
-			"key": "message",
 			"value": ""
 		}
 	]
