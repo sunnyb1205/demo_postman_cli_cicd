@@ -27,25 +27,28 @@ jobs:
 
       # Step 4: Run API Tests and Export JSON Results
       - name: Run API Tests
+        id: run_tests
         run: |
           postman collection run "35145714-c7009450-8a8f-46db-9298-35a75836cc2d" \
           -e "35145714-e9e5e2be-b1f3-4485-bdb0-119d3c862542" \
           --reporters cli,json \
           --reporter-json-export postman-results.json
 
-      # Step 5: Upload JSON Test Results
+      # Step 5: Always Upload JSON Test Results (Even on Failure)
       - name: Upload Test Results
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: postman-test-results
           path: postman-results.json
 
-      # Step 6: Display Results in GitHub Workflow Logs
+      # Step 6: Display JSON Test Results (Optional)
       - name: Display JSON Test Results
+        if: always()
         run: |
           cat postman-results.json
 
       # Step 7: Notify on Failure
       - name: Notify on Failure
         if: failure()
-        run: echo "API Tests Failed. Please check the postman-results.json for details."
+        run: echo "❌ API Tests Failed. Please check the postman-results.json for details."
