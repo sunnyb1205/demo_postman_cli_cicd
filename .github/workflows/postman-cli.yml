@@ -16,6 +16,5 @@ jobs:
         run: |
           postman collection run "35145714-c7009450-8a8f-46db-9298-35a75836cc2d" \
           -e "35145714-e9e5e2be-b1f3-4485-bdb0-119d3c862542" \
-          --verbose \
           --reporters cli,json \
           --reporter-json-export ./postman-results.json
