@@ -13,13 +13,16 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.collectionVariables.set(\"access-token\", pm.response.json().access_token);",
+							"//parse the json response",
+							"const response = pm.response.json();",
 							"",
+							"//get and set vars",
+							"pm.collectionVariables.set(\"token\", response.access_token);",
+							"",
+							"//tests",
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							""
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -28,8 +31,11 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"packages": {},
-						"type": "text/javascript"
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -71,13 +77,14 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var data = JSON.parse(responseBody);\r",
+							"//parse the json response\r",
+							"const response = pm.response.json();\r",
 							"\r",
-							"pm.collectionVariables.set(\"access-token\", pm.response.json().access_token);\r",
+							"//get and set vars\r",
+							"pm.collectionVariables.set('vehicleSippCode', response.vehicles[0].category.sipp_code);\r",
+							"pm.collectionVariables.set('rateCode', response.vehicles[0].rate_totals.rate.rate_code);\r",
 							"\r",
-							"pm.collectionVariables.set('vehicleSippCode', data.vehicles[0].category.sipp_code);\r",
-							"pm.collectionVariables.set('rateCode', data.vehicles[0].rate_totals.rate.rate_code);\r",
-							"\r",
+							"//tests\r",
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});"
@@ -95,7 +102,7 @@
 				"header": [
 					{
 						"key": "client_id",
-						"value": "{{vault:avis_client_id}}",
+						"value": "{{client_id}}",
 						"type": "text"
 					},
 					{
@@ -165,10 +172,13 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var data = JSON.parse(responseBody);\r",
+							"//parse the json response\r",
+							"const response = pm.response.json();\r",
 							"\r",
-							"pm.collectionVariables.set('reservationTotal',data.reservation.rate_totals.totals.reservation_total);\r",
+							"//get and set vars\r",
+							"pm.collectionVariables.set('reservationTotal',response.reservation.rate_totals.totals.reservation_total);\r",
 							"\r",
+							"//tests\r",
 							"pm.test(\"Status code is 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});"
@@ -234,10 +244,13 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var data = JSON.parse(responseBody);\r",
+							"//parse the json response\r",
+							"const response = pm.response.json();\r",
 							"\r",
-							"pm.collectionVariables.set('confirmationNumber', data.reservation.confirmation.number);\r",
+							"//get and set vars\r",
+							"pm.collectionVariables.set('confirmationNumber', response.reservation.confirmation.number);\r",
 							"\r",
+							"//tests\r",
 							"pm.test(\"Status code is 201\", () => {\r",
 							"    pm.response.to.have.status(201);\r",
 							"});"
@@ -291,10 +304,13 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var data = JSON.parse(responseBody);",
+							"//parse the json response",
+							"const response = pm.response.json();",
 							"",
-							"pm.collectionVariables.set('confirmationNumber_VR', data.reservation.confirmation.number);",
+							"////get and set vars",
+							"pm.collectionVariables.set('confirmationNumber_VR', response.reservation.confirmation.number);",
 							"",
+							"//tests",
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
 							"});",
@@ -372,10 +388,21 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"//parse the json response",
+							"const response = pm.response.json();",
+							"",
+							"////get and set vars",
+							"pm.collectionVariables.set('message', response.status.success.message);",
+							"",
+							"//tests",
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
 							"});",
-							""
+							"",
+							"pm.test(\"Check message status\", () => {",
+							"    message=pm.collectionVariables.get('message');",
+							"    pm.expect(message, \"Success\");",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -448,19 +475,15 @@
 	],
 	"variable": [
 		{
-			"key": "access-token",
-			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJwem5vRHdsYlNUcmFwM2FTQzdSUUl3anpzb2NJWGlaTUQ2cUxBakh5X0NVIn0.eyJqdGkiOiJhMjM4NmUwOC00MzBmLTQxMTctYTQ2ZC0yYjNjODlmZDZmODEiLCJleHAiOjE3MzYxNjE5ODYsIm5iZiI6MCwiaWF0IjoxNzM2MTU0ODQ2LCJpc3MiOiJodHRwczovL3Nzby1zc28uYXBwcy5hcGktbnAuYWJnYXBpc2VydmljZXMuY29tL2F1dGgvcmVhbG1zLzNzY2FsZS1zdGFnaW5nLWFwaS1vaWRjIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6Ijc1OTc5ZTM4LTZmZmUtNDZiYi1iYTdhLTFiOGRlZDk3YjAxMCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImU3YWUwMGQzIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiZmFjY2JlYTQtMDk0My00ZWZlLTllNWUtMWVkMWM0MWU1YTFlIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImNsaWVudElkIjoiZTdhZTAwZDMiLCJjbGllbnRIb3N0IjoiMTguMTkxLjcxLjI0NyIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiY2xpZW50X3JlZ2lvbiI6IkVNRUEiLCJjbGllbnRfdHJhdmVsX3R5cGUiOiI2IiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LWU3YWUwMGQzIiwiY2xpZW50QWRkcmVzcyI6IjE4LjE5MS43MS4yNDciLCJjbGllbnRfbmFtZSI6IkF2aW9zIn0.dZJs1HfbcheTWGDTXvzVILhw79jGQ6RhqhRME9rXNbbwq4xm9KjbnS9zOoFak1Ls09wcUwcCPztYuviiLknIgCxpCCULfZh7Z726P492uaFZwapH-IcE70uamOa0IMrKTYXPOEqT3L0fIjT-cTeeCEJXNelZOkZOIQMbOWNf8zDQHI9rPNTVuSUz-N5edJQk7XTEaGXEK3unC5YQvZUaNK22x1wRmbG_AOxw27gLb8BXAZmDVE81wHmuQYHAqy0npt_egAW0jpK0ogtN70E93qSXOjKXAH6WY_v0Dg1yzAj_vu5SUFbPo5ouh0peNxypt56_0XEuHkApXwxVt5KTmQ"
-		},
-		{
 			"key": "brand",
 			"value": "Avis",
-			"type": "string",
-			"disabled": true
+			"type": "string"
 		},
 		{
 			"key": "brand",
 			"value": "Budget",
-			"type": "string"
+			"type": "string",
+			"disabled": true
 		},
 		{
 			"key": "pickUpLocation",
@@ -482,14 +505,13 @@
 		},
 		{
 			"key": "countryCode",
-			"value": "IE",
+			"value": "GB",
 			"type": "string"
 		},
 		{
 			"key": "iataNumber",
 			"value": "Avis GBP",
-			"type": "string",
-			"disabled": true
+			"type": "string"
 		},
 		{
 			"key": "iataNumber",
@@ -505,8 +527,9 @@
 		},
 		{
 			"key": "iataNumber",
-			"value": "0041193E",
-			"type": "string"
+			"value": "Budget GBP",
+			"type": "string",
+			"disabled": true
 		},
 		{
 			"key": "iataNumber",
@@ -547,6 +570,18 @@
 		},
 		{
 			"key": "confirmationNumber_VR",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "access-token",
+			"value": ""
+		},
+		{
+			"key": "message",
 			"value": ""
 		}
 	]
