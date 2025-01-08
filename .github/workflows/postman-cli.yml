@@ -48,4 +48,4 @@ jobs:
       # Step 7: Notify on Failure
       - name: Notify on Failure
         if: failure()
-        run: echo "❌ API Tests Failed. Please check the postman-results.json for details."
+        run: echo "API Tests Failed. Please check the postman-results.json for details."
