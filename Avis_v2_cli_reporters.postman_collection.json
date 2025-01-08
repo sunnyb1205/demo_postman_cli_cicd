@@ -107,7 +107,7 @@
 					},
 					{
 						"key": "authorization",
-						"value": "Bearer {{access-token}}",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -208,7 +208,7 @@
 					},
 					{
 						"key": "authorization",
-						"value": "Bearer {{access-token}}",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -270,7 +270,7 @@
 					},
 					{
 						"key": "authorization",
-						"value": "Bearer {{access-token}}",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -339,7 +339,7 @@
 					},
 					{
 						"key": "authorization",
-						"value": "Bearer {{access-token}}",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -419,7 +419,7 @@
 					},
 					{
 						"key": "authorization",
-						"value": "Bearer {{access-token}}",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					},
 					{
